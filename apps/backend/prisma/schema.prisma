@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PosterStatus {
+  DRAFT
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  emailOrPhone String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  posters      Poster[]
+}
+
+model Template {
+  id           String   @id @default(uuid())
+  title        String
+  occasionType String
+  thumbnailUrl String?
+  layoutConfig Json
+  isActive     Boolean  @default(true)
+  posters      Poster[]
+}
+
+model Poster {
+  id                String          @id @default(uuid())
+  userId            String
+  templateId        String
+  formData          Json
+  uploadedPhotoUrls String[]
+  generatedImageUrl String?
+  status            PosterStatus    @default(DRAFT)
+  createdAt         DateTime        @default(now())
+  user              User            @relation(fields: [userId], references: [id])
+  template          Template        @relation(fields: [templateId], references: [id])
+  GenerationLog     GenerationLog[]
+}
+
+model GenerationLog {
+  id              String   @id @default(uuid())
+  posterId        String
+  geminiPromptUsed String
+  tokensUsed      Int?
+  latencyMs       Int?
+  success         Boolean
+  poster          Poster   @relation(fields: [posterId], references: [id])
+}
