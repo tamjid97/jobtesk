@@ -1,0 +1,20 @@
+{
+  "name": "politicraft_ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node api.js && concurrently -n FRONTEND,BACKEND -c blue,green \"npm --workspace=frontend run dev\" \"npm --workspace=backend run dev\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
